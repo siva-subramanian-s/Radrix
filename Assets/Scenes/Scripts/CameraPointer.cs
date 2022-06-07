@@ -24,12 +24,15 @@ using UnityEngine;
 /// </summary>
 public class CameraPointer : MonoBehaviour
 {
-    private const float _maxDistance = 10;
-    private GameObject _gazedAtObject = null;
+    private const float _maxDistance = Mathf.Infinity;
+    public GameObject _gazedAtObject;
 
     /// <summary>
     /// Update is called once per frame.
     /// </summary>
+    public void Start(){
+        GameObject.Find("Paper").GetComponent<MeshRenderer>().enabled = false;
+    }
     public void Update()
     {
         // Casts ray towards camera's forward direction, to detect if a GameObject is being gazed
@@ -38,19 +41,26 @@ public class CameraPointer : MonoBehaviour
         if (Physics.Raycast(transform.position, transform.forward, out hit, _maxDistance))
         {
             // GameObject detected in front of the camera.
-            if (_gazedAtObject != hit.transform.gameObject)
+            if (_gazedAtObject == hit.transform.gameObject)
             {
                 // New GameObject.
-                _gazedAtObject?.SendMessage("OnPointerExit");
-                _gazedAtObject = hit.transform.gameObject;
-                _gazedAtObject.SendMessage("OnPointerEnter");
+                // _gazedAtObject?.SendMessage("OnPointerExit");
+                // _gazedAtObject.SendMessage("OnPointerEnter");
+                
+                GameObject.Find("Paper").GetComponent<MeshRenderer>().enabled = true;
+            }
+            else
+            {
+                // No GameObject detected in front of the camera.
+                // _gazedAtObject?.SendMessage("OnPointerExit");
+                GameObject.Find("Paper").GetComponent<MeshRenderer>().enabled = false;
             }
         }
         else
         {
             // No GameObject detected in front of the camera.
-            _gazedAtObject?.SendMessage("OnPointerExit");
-            _gazedAtObject = null;
+            // _gazedAtObject?.SendMessage("OnPointerExit");
+            GameObject.Find("Paper").GetComponent<MeshRenderer>().enabled = false;
         }
 
         // Checks for screen touches.
